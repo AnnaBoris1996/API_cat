@@ -9,29 +9,31 @@ from pygame.examples.aliens import load_image
 from pygame.examples.cursors import image
 
 
-def load_image(url):
+def load_image():
     response=requests.get(url)
-    print(response)
     image_data=BytesIO(response.content)
-    print(response.headers)
     img=Image.open(image_data)
-    print(img)
-    return ImageTk.PhotoImage(img)
+    img.thumbnail((500,500))#подгоняем под размер
+    img=ImageTk.PhotoImage(img)
+    label.image = img
+    label.config(image=img)
+
 
 w=Tk()
-w.geometry("500x500")
+w.geometry("550x550")
 
-label=Label()
+label=Label(width=500, height=500)
 label.pack()
 
 url="https://cataas.com/cat"
-img=load_image(url)
 
-if img:
-    label.config(image=img)
-    label.image=img
+mainmenu=Menu(w)
+w.config(menu=mainmenu)
+file_menu=Menu(mainmenu, tearoff=0)
+mainmenu.add_cascade(label="Файл", menu=file_menu)
+file_menu.add_command(label="Загрузка изображения", command=load_image)
+file_menu.add_command(label="Выход", command=w.destroy)
 
-but=Button(text="Обновить картинку", command=load_image)
-but.pack()
+load_image()
 
 w.mainloop()
